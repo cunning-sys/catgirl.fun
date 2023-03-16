@@ -6,19 +6,30 @@ getgenv().catgirlcc = {
     movement_prediction_type = 'catgirl.cc', -- // Roblox ( Uses Roblox velocity. ), catgirl.cc ( Uses catgirl.cc's custom velocity writer. )
     movement_prediction = 0.119,
 
-    hitpart_table = {'Head', 'HumanoidRootPart'}
+    hitpart_table = {'Head', 'HumanoidRootPart'},
     use_closest_part = true,
     closest_part_mode = 'Point', -- // Point, Part
-
-    fov_visible = false,
-    fov_filled = false,
-    fov_radius = 8,
-    fov_color = Color3.fromRGB(0, 0, 0),
     visualize_silent = false,
 
-    target_type = 'FOV', -- // FOV, Target
-    target_keybind = 'c',
-    mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. )
+    fov = {
+        visible = false,
+        filled = false,
+        radius = 8,
+        color = Color3.fromRGB(0, 0, 0)
+    },
+    checks = {
+        wall_check = true,
+        screen_check = true,
+        downed_check = true,
+        grabbed_check = true,
+        crew_check = false,
+        friend_check = false
+    },
+    settings = {
+        target_type = 'FOV', -- // FOV, Target
+        target_keybind = 'c',
+        mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. )
+    }
 }
 -- functions/connections
 catgirlcc.functions = {}
