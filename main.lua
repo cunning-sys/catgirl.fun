@@ -49,6 +49,8 @@ local CurrentCamera = Workspace.CurrentCamera
 
 local Players = game:GetService('Players')
 local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local GetGuiInset = game:GetService("GuiService"):GetGuiInset()
 
 local fov_circle = Drawing.new('Circle')
 fov_circle.Thickness = 0.8
@@ -62,12 +64,34 @@ catgirlcc.functions.update_fov = function()
     fov_circle.Radius =  catgirlcc.fov.radius * 3
     fov_circle.Visible = catgirlcc.fov.visible
     fov_circle.Filled = catgirlcc.fov.filled
-    fov_circle.Position = Vector2.new(Mouse.X, Mouse.Y + (Inset))
-    return Circle
+    fov_circle.Position = Vector2.new(Mouse.X, Mouse.Y + (GetGuiInset.Y))
+    return fov_circle
 end
 
 catgirlcc.functions.get_closest_player = function()
     local dist = math.huge
     local player = nil
 
-    for i,v ipairs(Players:GetPlayers()) do
+    for i, player in ipairs(Players:GetPlayers()) do
+        if player
+end
+
+catgirlcc.functions.get_closest_point = function(player)
+    local mousePosition = game:GetService("UserInputService"):GetMouseLocation()
+
+    local ray = CurrentCamera:ViewportPointToRay(mousePosition.X, mousePosition.Y)
+
+    local closestPart = nil
+    local closestDistance = math.huge
+
+    for i, part in pairs(player.Character:GetDescendants()) do
+        if table.find({'Part', 'BasePart', 'MeshPart'}, part.ClassName) then
+            local distance = (part.Position - ray.Origin):Dot(ray.Direction)
+            if distance < closestDistance then
+                closestPart = part
+                closestDistance = distance
+            end
+        end
+    end
+    return ray.Origin + ray.Direction * closestDistance
+end
