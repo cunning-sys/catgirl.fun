@@ -15,7 +15,16 @@ getgenv().catgirlcc = {
         visible = false,
         filled = false,
         radius = 8,
-        color = Color3.fromRGB(0, 0, 0)
+        color = Color3.fromRGB(0, 0, 0),
+
+        gun_fov = {
+            enabled = false,
+
+            ['[Revolver]'] = {fov_radius = 13, movement_prediction = 0.119},
+            ['[Double-Barrel SG]'] = {fov_radius = 25, movement_prediction = 0.134},
+            ['[TacticalShotgun]'] = {fov_radius = 20, movement_prediction = 0.128},
+            ['[Shotgun]'] = {fov_radius = 20, movement_prediction = 0.128} -- you can add your own guns :3
+        }
     },
     checks = {
         wall_check = true,
@@ -43,3 +52,6 @@ local LocalPlayer = Players.LocalPlayer
 
 catgirlcc.functions.get_closest_player = function()
     local dist = math.huge
+    local player = nil
+
+    for i,v ipairs(Players:GetPlayers()) do
