@@ -50,6 +50,22 @@ local CurrentCamera = Workspace.CurrentCamera
 local Players = game:GetService('Players')
 local LocalPlayer = Players.LocalPlayer
 
+local fov_circle = Drawing.new('Circle')
+fov_circle.Thickness = 0.8
+fov_circle.Transparency = 0.7
+fov_circle.Color = catgirlcc.fov.color
+
+catgirlcc.functions.update_fov = function()
+    if not (fov_circle) then
+        return fov_circle
+    end
+    fov_circle.Radius =  catgirlcc.fov.radius * 3
+    fov_circle.Visible = catgirlcc.fov.visible
+    fov_circle.Filled = catgirlcc.fov.filled
+    fov_circle.Position = Vector2.new(Mouse.X, Mouse.Y + (Inset))
+    return Circle
+end
+
 catgirlcc.functions.get_closest_player = function()
     local dist = math.huge
     local player = nil
