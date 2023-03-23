@@ -167,6 +167,10 @@ catgirlcc.functions.get_closest_point = function(player) -- i don't think this w
     return ray.Origin + ray.Direction * closestDistance
 end
 
+catgirlcc.functions.aim_check = function()
+
+end
+
 catgirlcc.functions.get_aim = function()
     local target = get_closest_player()
 
@@ -176,7 +180,9 @@ catgirlcc.functions.get_aim = function()
         catgirlcc.current_hitpos = tostring(part)
     elseif catgirlcc.closest_part_mode == 'Point' then
         -- not done 3:
+        catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
     end
+    return target
 end
 
 catgirlcc.connections.service = RunService.Heartbeat:Connect(function()
@@ -189,8 +195,9 @@ __index = hookmetamethod(game,"__index", function(Obj, Property)
         local target = catgirlcc.functions.get_aim()
         if catgirlcc.enabled and target and not catgirlcc.functions.aim_check(target) then
             local predicted_pos = target.Character.Humanoid.MoveDirection * 16
-            local ending_pos = target.Character[].
-            return predictedPosition
+            local ending_pos = CFrame.new(target.Character[catgirlcc.current_hitpos].Position + predicted_pos)
+
+            return ending_pos
         end
     end
     return __index(Obj, Property)
