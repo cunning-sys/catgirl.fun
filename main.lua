@@ -181,7 +181,7 @@ catgirlcc.functions.set_aim = function()
     elseif catgirlcc.closest_part_mode == 'Point' then
         if catgirlcc.target then continue end
         -- not done 3:
-        --catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
+        -- catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
     end
 end
 
