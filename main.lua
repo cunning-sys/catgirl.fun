@@ -39,13 +39,21 @@ getgenv().catgirlcc = {
         target_type = 'FOV', -- // FOV [DONE], Target
         target_keybind = 'c',
         mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. ) DONE
+
+        safety = {
+            unload = {
+                enabled = false,
+                keybind = 'z'
+            },
+            kick_on_staff_join = true,
+        }
     }
 }
 -- functions/connections
 catgirlcc.functions = {}
 catgirlcc.connections = {}
 catgirlcc.current_hitpos = nil
-catgirlcc.target
+catgirlcc.target = nil
 -- vars
 local Workspace = game:GetService('Workspace')
 local CurrentCamera = Workspace.CurrentCamera
@@ -70,6 +78,18 @@ catgirlcc.functions.update_fov = function()
     fov_circle.Filled = catgirlcc.fov.filled
     fov_circle.Position = Vector2.new(Mouse.X, Mouse.Y + (GetGuiInset.Y))
     return fov_circle
+end
+
+catgirlcc.functions.keybinds = function(inputObject, IsTyping)
+    if IsTyping then return end
+    if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.safety.keybind:Upper()] and catgirlcc.settings.safety.enabled then
+        catgirlcc.connections.service:Disconnect()
+        catgirlcc.connections.keybinds:Disconnect()
+    end
+
+    if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.target_keybind:Upper()] then
+        -- not done !!!
+    end
 end
 
 catgirlcc.functions.is_visible = function(part, partdescendant)
@@ -140,7 +160,7 @@ catgirlcc.functions.get_closest_part = function(player)
     return closest_part
 end
 
-catgirlcc.functions.get_closest_point = function(player) -- i don't think this work >:(
+catgirlcc.functions.get_closest_point = function(player) -- i don't think this works >:(
     local mousePosition = game:GetService("UserInputService"):GetMouseLocation()
 
     local ray = CurrentCamera:ViewportPointToRay(mousePosition.X, mousePosition.Y)
@@ -180,16 +200,12 @@ catgirlcc.functions.aim_check = function(player)
         end
     end
     if catgirlcc.checks.crew_check and player and player.Character then
-        
+
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
         return true
     end
     return false
-end
-
-catgirlcc.functions.aim_check = function()
-
 end
 
 catgirlcc.functions.set_aim = function()
@@ -209,6 +225,8 @@ catgirlcc.connections.service = RunService.Heartbeat:Connect(function()
     catgirlcc.functions.update_fov()
     catgirlcc.functions.set_aim()
 end)
+
+catgirlcc.connections.keybinds = game:GetService("UserInputService").InputBegan:Connect(catgirlcc.functions.keybinds)
 
 local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
