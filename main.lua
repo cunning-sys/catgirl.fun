@@ -3,16 +3,16 @@ getgenv().catgirlcc = {
     enabled = true,
 
     predict_movement = true,
-    movement_prediction_type = 'catgirl.cc', -- // Roblox ( Uses Roblox velocity. ), catgirl.cc ( Uses catgirl.cc's custom velocity writer. )
+    movement_prediction_type = 'catgirl.cc', -- // Roblox ( Uses Roblox velocity. ), catgirl.cc ( Uses catgirl.cc's custom velocity writer. ) [DONE]
     movement_prediction = 0.119,
 
-    hitpart_table = {'Head', 'HumanoidRootPart'},
-    use_closest_part = true, -- // Ignores the hitpart table.
-    closest_part_mode = 'Point', -- // Point, Part
+    hitpart_table = {'Head', 'HumanoidRootPart'}, -- [DONE]
+    use_closest_part = true, -- // Ignores the hitpart table. [DONE]
+    closest_part_mode = 'Point', -- // Point, Part [DONE]
     visualize_silent = false, -- // Draws a dot on the position you will be shooting.
 
     fov = {
-        type = 'Static', -- // Static, Dynamic
+        type = 'Static', -- // Static [DONE], Dynamic
 
         visible = false,
         filled = false,
@@ -20,7 +20,7 @@ getgenv().catgirlcc = {
         color = Color3.fromRGB(0, 0, 0),
 
         gun_settings = {
-            enabled = false,
+            enabled = false, -- [DONE]
 
             ['[Revolver]'] = {fov_radius = 13, movement_prediction = 0.119},
             ['[Double-Barrel SG]'] = {fov_radius = 25, movement_prediction = 0.134},
@@ -29,16 +29,16 @@ getgenv().catgirlcc = {
         }
     },
     checks = {
-        wall_check = true,
-        downed_check = true,
-        grabbed_check = true,
+        wall_check = true, -- [DONE]
+        downed_check = true, -- [DONE]
+        grabbed_check = true, -- [DONE]
         crew_check = false,
         friend_check = false
     },
     settings = {
-        target_type = 'FOV', -- // FOV, Target
+        target_type = 'FOV', -- // FOV [DONE], Target
         target_keybind = 'c',
-        mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. )
+        mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. ) DONE
     }
 }
 -- functions/connections
@@ -168,6 +168,26 @@ catgirlcc.functions.get_closest_point = function(player) -- i don't think this w
     return ray.Origin + ray.Direction * closestDistance
 end
 
+catgirlcc.functions.aim_check = function(player)
+    if catgirlcc.checks.downed_check and player and player.Character then
+        if player.Character.BodyEffects["K.O"].Value then
+            return true
+        end
+    end
+    if catgirlcc.checks.grabbed_check and player and player.Character then
+        if player.Character:FindFirstChild("GRABBING_CONSTRAINT") then
+            return true
+        end
+    end
+    if catgirlcc.checks.crew_check and player and player.Character then
+        
+    end
+    if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
+        return true
+    end
+    return false
+end
+
 catgirlcc.functions.aim_check = function()
 
 end
@@ -194,7 +214,7 @@ local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
         catgirlcc.target = catgirlcc.functions.get_closest_player()
-        if catgirlcc.enabled and catgirlcc.target and not catgirlcc.functions.aim_check(target) then
+        if catgirlcc.enabled and catgirlcc.target and catgirlcc.functions.aim_check(catgirlcc.target) then
             local predicted_pos = target.Character.Humanoid.MoveDirection * 16
             local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_hitpos].Position + predicted_pos)
 
