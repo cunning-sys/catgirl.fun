@@ -45,6 +45,7 @@ getgenv().catgirlcc = {
 catgirlcc.functions = {}
 catgirlcc.connections = {}
 catgirlcc.current_hitpos = nil
+catgirlcc.target
 -- vars
 local Workspace = game:GetService('Workspace')
 local CurrentCamera = Workspace.CurrentCamera
@@ -171,31 +172,31 @@ catgirlcc.functions.aim_check = function()
 
 end
 
-catgirlcc.functions.get_aim = function()
-    local target = get_closest_player()
-
+catgirlcc.functions.set_aim = function()
     if catgirlcc.closest_part_mode == 'Part' then
-        local part = catgirlcc.functions.get_closest_part(target)
+        if catgirlcc.target then continue end
+        local part = catgirlcc.functions.get_closest_part(catgirlcc.target)
 
         catgirlcc.current_hitpos = tostring(part)
     elseif catgirlcc.closest_part_mode == 'Point' then
+        if catgirlcc.target then continue end
         -- not done 3:
-        catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
+        --catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
     end
-    return target
 end
 
 catgirlcc.connections.service = RunService.Heartbeat:Connect(function()
     catgirlcc.functions.update_fov()
+    catgirlcc.functions.set_aim()
 end)
 
 local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
-        local target = catgirlcc.functions.get_aim()
-        if catgirlcc.enabled and target and not catgirlcc.functions.aim_check(target) then
+        catgirlcc.target = catgirlcc.functions.get_closest_player()
+        if catgirlcc.enabled and catgirlcc.target and not catgirlcc.functions.aim_check(target) then
             local predicted_pos = target.Character.Humanoid.MoveDirection * 16
-            local ending_pos = CFrame.new(target.Character[catgirlcc.current_hitpos].Position + predicted_pos)
+            local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_hitpos].Position + predicted_pos)
 
             return ending_pos
         end
