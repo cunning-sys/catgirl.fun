@@ -88,7 +88,7 @@ catgirlcc.functions.keybinds = function(inputObject, IsTyping)
     end
 
     if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.target_keybind:Upper()] then
-        -- not done !!!
+        -- not done !!! do after fov mode
     end
 end
 
@@ -165,27 +165,27 @@ catgirlcc.functions.get_closest_point = function(player) -- i don't think this w
 
     local ray = CurrentCamera:ViewportPointToRay(mousePosition.X, mousePosition.Y)
 
-    local closestPart = nil
-    local closestDistance = math.huge
+    local closest_part = nil
+    local dist = math.huge
 
     for i, part in pairs(player.Character:GetChildren()) do
         if table.find({'Part', 'BasePart', 'MeshPart'}, part.ClassName) then
             if not catgirlcc.use_closest_part and table.find(catgirlcc.hitpart_table, part.Name) then
-                local distance = (part.Position - ray.Origin):Dot(ray.Direction)
-                if distance < closestDistance then
-                    closestPart = part
-                    closestDistance = distance
+                local mag = (part.Position - ray.Origin):Dot(ray.Direction)
+                if mag < dist then
+                    closest_part = part
+                    dist = mag
                 end
             elseif catgirlcc.use_closest_part then
-                local distance = (part.Position - ray.Origin):Dot(ray.Direction)
-                if distance < closestDistance then
-                    closestPart = part
-                    closestDistance = distance
+                local mag = (part.Position - ray.Origin):Dot(ray.Direction)
+                if mag < dist then
+                    closest_part = part
+                    dist = mag
                 end
             end
         end
     end
-    return ray.Origin + ray.Direction * closestDistance
+    return ray.Origin + ray.Direction * dist
 end
 
 catgirlcc.functions.aim_check = function(player)
@@ -200,7 +200,7 @@ catgirlcc.functions.aim_check = function(player)
         end
     end
     if catgirlcc.checks.crew_check and player and player.Character then
-
+        -- do when home !!!!
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
         return true
@@ -232,7 +232,7 @@ local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
         catgirlcc.target = catgirlcc.functions.get_closest_player()
-        if catgirlcc.enabled and catgirlcc.target and catgirlcc.functions.aim_check(catgirlcc.target) then
+        if catgirlcc.enabled and catgirlcc.target and not catgirlcc.functions.aim_check(catgirlcc.target) then
             local predicted_pos = target.Character.Humanoid.MoveDirection * 16
             local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_hitpos].Position + predicted_pos)
 
