@@ -52,6 +52,7 @@ getgenv().catgirlcc = {
 -- functions/connections
 catgirlcc.functions = {}
 catgirlcc.connections = {}
+catgirlcc.connections.tools = {nil, nil}
 catgirlcc.current_aimpos = nil
 catgirlcc.current_aimpart = nil
 catgirlcc.target = nil
@@ -64,6 +65,15 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local GetGuiInset = game:GetService("GuiService"):GetGuiInset()
 local RunService = game:GetService('RunService')
+local Remote = nil
+
+if game.PlaceId == 5602055394 then
+    Remote = game:GetService('ReplicatedStorage').Bullets
+else
+    if game:GetService('ReplicatedStorage'):FindFirstChild('MainEvent') then
+        Remote = game:GetService('ReplicatedStorage').MainEvent
+    end
+end
 
 local fov_circle = Drawing.new('Circle')
 fov_circle.Thickness = 0.8
@@ -189,6 +199,16 @@ catgirlcc.functions.get_closest_point = function(player) -- i don't think this w
     return ray.Origin + ray.Direction * dist
 end
 
+catgirlcc.functions.is_gun = function(tool, state)
+    if tool:IsA('Tool') and table.find(table, tool.Name)
+        if state == 'value' then
+            return true
+        elseif state == 'tool' then
+            return tool
+        end
+    end
+end
+
 catgirlcc.functions.aim_check = function(player)
     if catgirlcc.checks.downed_check and player and player.Character then
         if player.Character.BodyEffects["K.O"].Value then
@@ -211,15 +231,16 @@ end
 
 catgirlcc.functions.calculate_aimpoint = function()
     if catgirlcc.target ~= nil then
-        current_aimpart = catgirlcc.functions.get_closest_part(catgirlcc.target)
-            if catgirlcc.target then continue end
-            local part = catgirlcc.functions.get_closest_part(catgirlcc.target)
+        catgirlcc.current_aimpart = catgirlcc.functions.get_closest_part(catgirlcc.target)
 
-            catgirlcc.current_hitpos = tostring(part)
-        elseif catgirlcc.closest_part_mode == 'Point' then
-            if catgirlcc.target then continue end
-            -- not done 3:
-            -- catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
+        if catgirlcc.closest_part_mode == 'Point' then
+            catgirlcc.current_aimpos = catgirlcc.functions.get_closest_point(catgirlcc.current_aimpart)
+        else
+            catgirlcc.current_aimpos = catgirlcc.current_aimpart.Position
+        end
+
+        if typeof(catgirlcc.current_aimpos) == 'CFrame' then
+            catgirlcc.current_aimpos = catgirlcc.current_aimpos.p
         end
     end
 end
@@ -229,18 +250,33 @@ catgirlcc.connections.service = RunService.Heartbeat:Connect(function()
     catgirlcc.functions.set_aim()
 end)
 
-catgirlcc.connections.keybinds = game:GetService("UserInputService").InputBegan:Connect(catgirlcc.functions.keybinds)
+LocalPlayer.CharacterAdded:Connect(function(char)
+    char.ChildAdded:Connect(function(child)
+        if catgirlcc.functions.is_gun(child) then
+            if catgirlcc.connections.tools[1] == nil then
+                catgirlcc.connections.tools[1] = child
+            end
+            if catgirlcc.connections.tools[1] ~= child and catgirlcc.connections.tools[2] ~= nil then
+                catgirlcc.connections.tools[2]:Disconnect()
+                catgirlcc.connections.tools[1] = child
+            end
 
+            catgirlcc.connections.tools[2] = child.Activated:Connect()
+        end
+    end)
+end)
+
+--[[
 local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
         catgirlcc.target = catgirlcc.functions.get_closest_player()
         if catgirlcc.enabled and catgirlcc.target and not catgirlcc.functions.aim_check(catgirlcc.target) then
             local predicted_pos = target.Character.Humanoid.MoveDirection * 16
-            local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_hitpos].Position + predicted_pos)
+            local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_aimpos].Position + predicted_pos)
 
             return ending_pos
         end
     end
     return __index(Obj, Property)
-end)
+end)]]
