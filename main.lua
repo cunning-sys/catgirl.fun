@@ -52,7 +52,8 @@ getgenv().catgirlcc = {
 -- functions/connections
 catgirlcc.functions = {}
 catgirlcc.connections = {}
-catgirlcc.current_hitpos = nil
+catgirlcc.current_aimpos = nil
+catgirlcc.current_aimpart = nil
 catgirlcc.target = nil
 -- vars
 local Workspace = game:GetService('Workspace')
@@ -208,16 +209,18 @@ catgirlcc.functions.aim_check = function(player)
     return false
 end
 
-catgirlcc.functions.set_aim = function()
-    if catgirlcc.closest_part_mode == 'Part' then
-        if catgirlcc.target then continue end
-        local part = catgirlcc.functions.get_closest_part(catgirlcc.target)
+catgirlcc.functions.calculate_aimpoint = function()
+    if catgirlcc.target ~= nil then
+        current_aimpart = catgirlcc.functions.get_closest_part(catgirlcc.target)
+            if catgirlcc.target then continue end
+            local part = catgirlcc.functions.get_closest_part(catgirlcc.target)
 
-        catgirlcc.current_hitpos = tostring(part)
-    elseif catgirlcc.closest_part_mode == 'Point' then
-        if catgirlcc.target then continue end
-        -- not done 3:
-        -- catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
+            catgirlcc.current_hitpos = tostring(part)
+        elseif catgirlcc.closest_part_mode == 'Point' then
+            if catgirlcc.target then continue end
+            -- not done 3:
+            -- catgirlcc.current_hitpos = catgirlcc.functions.get_closest_point(target)
+        end
     end
 end
 
