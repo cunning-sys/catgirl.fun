@@ -53,6 +53,7 @@ getgenv().catgirlcc = {
 catgirlcc.functions = {}
 catgirlcc.connections = {}
 catgirlcc.connections.tools = {nil, nil}
+catgirlcc.args = nil
 catgirlcc.current_aimpos = nil
 catgirlcc.current_aimpart = nil
 catgirlcc.target = nil
@@ -261,9 +262,21 @@ LocalPlayer.CharacterAdded:Connect(function(char)
                 catgirlcc.connections.tools[1] = child
             end
 
-            catgirlcc.connections.tools[2] = child.Activated:Connect()
+            catgirlcc.connections.tools[2] = child.Activated:Connect(function()
+                if catgirlcc.target and catgirlcc.current_aimpos and catgirlcc.settings.mode == 'Safe' then
+                    Remote:FireServer(catgirlcc.args, catgirlcc.current_aimpos)
+                end
+            end)
         end
     end)
+end)
+
+mt.__namecall = newcclosure(function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+
+    if catgirlcc.settings.mode == 'Safe' then
+        
 end)
 
 --[[
