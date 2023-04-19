@@ -306,12 +306,14 @@ end)
 local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
-        catgirlcc.target = catgirlcc.functions.get_closest_player()
-        if catgirlcc.enabled and catgirlcc.target and not catgirlcc.functions.aim_check(catgirlcc.target) then
-            local predicted_pos = target.Character.Humanoid.MoveDirection * 16
-            local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_aimpos].Position + predicted_pos)
+        if catgirlcc.enabled then
+            catgirlcc.target = catgirlcc.functions.get_closest_player()
+            if catgirlcc.target and not catgirlcc.functions.aim_check(catgirlcc.target) then
+                local predicted_pos = target.Character.Humanoid.MoveDirection * 16
+                local ending_pos = CFrame.new([catgirlcc.target].Character[catgirlcc.current_aimpos].Position + predicted_pos)
 
-            return ending_pos
+                return ending_pos
+            end
         end
     end
     return __index(Obj, Property)
