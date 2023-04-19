@@ -130,6 +130,10 @@ fov_circle.Color = catgirlcc.fov.color
 local visualized_dot = Drawing.new('Circle')
 local visualized_tracer = Drawing.new('Line')
 
+--[[
+    <void> catgirlcc.functions.update_fov()
+]]--
+
 catgirlcc.functions.update_fov = function()
     if not (fov_circle) then
         return fov_circle
@@ -154,7 +158,23 @@ catgirlcc.functions.keybinds = function(inputObject, IsTyping)
     end
 end
 
-catgirlcc.functions.is_visible = function(part, partdescendant)
+--[[
+    <void> catgirlcc.functions.unload()
+]]--
+
+catgirlcc.functions.unload = function()
+    if catgirlcc.settings.safety.unload.enabled and not catgirlcc.unload then
+        for i,v in next, catgirlcc.connections do
+            v:Disconnect()
+        end
+    end
+end
+
+--[[
+    <void> catgirlcc.functions.is_visible(part, partparent)
+]]--
+
+catgirlcc.functions.is_visible = function(part, partparent)
     if not catgirlcc.checks.wall_check then
         return true
     end
@@ -172,20 +192,22 @@ catgirlcc.functions.is_visible = function(part, partdescendant)
 
         if results then
             local hit = results.Instance
-            local is_visible = not hit or hit:IsDescendantOf(partdescendant)
+            local is_visible = not hit or hit:IsDescendantOf(partparent)
 
             return is_visible
         end
     end
     return false
 end
-
+--[[
+    <void> catgirlcc.functions.get_closest_player()
+]]--
 catgirlcc.functions.get_closest_player = function()
     local dist = math.huge
     local cplayer = nil
 
     for i, player in ipairs(Players:GetPlayers()) do
-        if player.Character and player ~= LocalPlayer then
+        if player.Character and player ~= LocalPlayer and catgirlcc.functions.aim_check(player) then
             local pos = player.Character:GetBoundingBox().Position
             if pos then continue end
 
@@ -201,7 +223,9 @@ catgirlcc.functions.get_closest_player = function()
     end
     return cplayer
 end
-
+--[[
+    <void> catgirlcc.functions.get_closest_part(player)
+]]--
 catgirlcc.functions.get_closest_part = function(player)
     local closest_part = nil
     local dist = math.huge
@@ -222,12 +246,20 @@ catgirlcc.functions.get_closest_part = function(player)
     return closest_part
 end
 
+--[[
+    <void> catgirlcc.functions.get_closest_point(part)
+]]--
+
 catgirlcc.functions.get_closest_point = function(part)
     local trans = part.CFrame:pointToObjectSpace(Mouse.Hit.Position)
     local size = part.Size * 0.5
 
     return part.CFrame * Vector3.new(math.clamp(trans.X, -size.X, size.x), math.clamp(trans.Y, -size.Y, size.Y), math.clamp(trans.Z, -size.Z, size.Z))
 end
+
+--[[
+    <void> catgirlcc.functions.is_gun(tool, state - 'value', 'tool')
+]]--
 
 catgirlcc.functions.is_gun = function(tool, state)
     if tool:IsA('Tool') and table.find(table, tool.Name)
@@ -239,6 +271,10 @@ catgirlcc.functions.is_gun = function(tool, state)
     end
 end
 
+--[[
+    <void> catgirlcc.functions.get_prediction()
+]]--
+
 catgirlcc.functions.get_prediction = function()
     if catgirlcc.predict_movement then
         return catgirlcc.movement_prediction
@@ -246,6 +282,10 @@ catgirlcc.functions.get_prediction = function()
         return 0
     end
 end
+
+--[[
+    <void> catgirlcc.functions.auto_movement_prediction()
+]]--
 
 catgirlcc.functions.auto_movement_prediction = function() -- add in the values when im home
     if catgirlcc.auto_movement_prediction.enabled then
@@ -295,33 +335,45 @@ catgirlcc.functions.auto_movement_prediction = function() -- add in the values w
     end
 end
 
+--[[
+    <void> catgirlcc.functions.draw_visualized_point()
+]]--
+
 catgirlcc.functions.draw_visualized_point = function()
     if not (visualized_dot or visualized_tracer) then
         return visualized_dot or visualized_tracer
     end
-    
+
     if
 end
+
+--[[
+    <void> catgirlcc.functions.aim_check(player)
+]]--
 
 catgirlcc.functions.aim_check = function(player)
     if catgirlcc.checks.downed_check and player and player.Character then
         if player.Character.BodyEffects["K.O"].Value then
-            return true
+            return false
         end
     end
     if catgirlcc.checks.grabbed_check and player and player.Character then
         if player.Character:FindFirstChild("GRABBING_CONSTRAINT") then
-            return true
+            return false
         end
     end
-    if catgirlcc.checks.crew_check and player and player.Character then
+    if catgirlcc.checks.crew_check and player then
         -- done at home
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
-        return true
+        return false
     end
-    return false
+    return true
 end
+
+--[[
+    <void> catgirlcc.functions.calculate_aimpoint()
+]]--
 
 catgirlcc.functions.calculate_aimpoint = function()
     if catgirlcc.target ~= nil then
@@ -340,9 +392,7 @@ catgirlcc.functions.calculate_aimpoint = function()
             local velocity = catgirlcc.current_aimpart.Velocity
             local resolved_velocity = catgirlcc.target.Character.Humanoid.MoveDirection * 16
 
-            if velocity.Magnitude < 35 then
-                catgirlcc.current_aimpos = catgirlcc.current_aimpos + resolved_velocity * catgirlcc.functions.get_prediction()
-            elseif velocity.Magnitude > 69420 then
+            if (velocity.Magnitude > -40 or velocity.Magnitude < 80) then
                 catgirlcc.current_aimpos = catgirlcc.current_aimpos + resolved_velocity * catgirlcc.functions.get_prediction()
             else
                 catgirlcc.current_aimpos = catgirlcc.current_aimpos + velocity * catgirlcc.functions.get_prediction()
