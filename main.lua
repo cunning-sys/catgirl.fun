@@ -274,6 +274,15 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     end)
 end)
 
+local __namecall
+__namecall = hookmetamethod(game, '__namecall', function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+
+    if tostring(self.Name) == 'MainEvent' and tostring(method) == 'FireServer' then
+        if table.find({'TeleportDetect', 'CHECKER_1', 'CHECKER', 'GUI_CHECK', 'OneMoreTime', 'checkingSPEED', 'BANREMOTE', 'KICKREMOTE', 'BR_KICKPC', 'BR_KICKMOBILE'}, args[1])
+end)
+
 mt.__namecall = newcclosure(function(self, ...)
     local method = getnamecallmethod()
     local args = {...}
