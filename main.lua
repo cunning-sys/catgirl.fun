@@ -91,7 +91,7 @@ getgenv().catgirlcc = {
         }
     }
 }
--- functions/connections
+-- functions/connections/etc storage
 catgirlcc.functions = {}
 catgirlcc.connections = {}
 catgirlcc.unloaded = false
@@ -113,7 +113,7 @@ local Remote = nil
 
 local mt = getrawmetatable(game)
 local backupnamecall = mt.__namecall
-
+-- functions
 if game.PlaceId == 5602055394 then
     Remote = game:GetService('ReplicatedStorage').Bullets
 else
@@ -199,9 +199,11 @@ catgirlcc.functions.is_visible = function(part, partparent)
     end
     return false
 end
+
 --[[
     <void> catgirlcc.functions.get_closest_player()
 ]]--
+
 catgirlcc.functions.get_closest_player = function()
     local dist = math.huge
     local cplayer = nil
@@ -223,9 +225,11 @@ catgirlcc.functions.get_closest_player = function()
     end
     return cplayer
 end
+
 --[[
     <void> catgirlcc.functions.get_closest_part(player)
 ]]--
+
 catgirlcc.functions.get_closest_part = function(player)
     local closest_part = nil
     local dist = math.huge
@@ -404,7 +408,7 @@ catgirlcc.functions.calculate_aimpoint = function()
         end
     end
 end
-
+-- the script
 catgirlcc.connections.mainservice = RunService.Heartbeat:Connect(function()
     catgirlcc.functions.update_fov()
     catgirlcc.functions.calculate_aimpoint()
@@ -473,7 +477,7 @@ mt.__namecall = newcclosure(function(self, ...)
     end
 end)
 
---[[
+--[[ blatant mode
 local __index
 __index = hookmetamethod(game,"__index", function(Obj, Property)
     if Obj:IsA("Mouse") and Property == "Hit" then
