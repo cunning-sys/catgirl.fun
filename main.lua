@@ -280,7 +280,10 @@ __namecall = hookmetamethod(game, '__namecall', function(self, ...)
     local args = {...}
 
     if tostring(self.Name) == 'MainEvent' and tostring(method) == 'FireServer' then
-        if table.find({'TeleportDetect', 'CHECKER_1', 'CHECKER', 'GUI_CHECK', 'OneMoreTime', 'checkingSPEED', 'BANREMOTE', 'KICKREMOTE', 'BR_KICKPC', 'BR_KICKMOBILE'}, args[1])
+        if table.find({'TeleportDetect', 'CHECKER_1', 'CHECKER', 'GUI_CHECK', 'OneMoreTime', 'checkingSPEED', 'BANREMOTE', 'KICKREMOTE', 'BR_KICKPC', 'BR_KICKMOBILE'}, args[1]) then
+            return
+        end
+    end
 end)
 
 mt.__namecall = newcclosure(function(self, ...)
