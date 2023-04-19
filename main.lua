@@ -5,14 +5,56 @@ getgenv().catgirlcc = {
     predict_movement = true,
     movement_prediction_type = 'catgirl.cc', -- // Roblox ( Uses Roblox velocity. ), catgirl.cc ( Uses catgirl.cc's custom velocity writer. ) [DONE]
     movement_prediction = 0.119,
+    auto_movement_prediction = {
+        enabled = true,
+
+        p10_20 = 0,
+        p20_30 = 0,
+        p30_40 = 0,
+        p40_50 = 0,
+        p50_60 = 0,
+        p60_70 = 0,
+        p70_80 = 0,
+        p80_90 = 0,
+        p90_100 = 0,
+        p100_110 = 0,
+        p110_120 = 0,
+        p120_130 = 0,
+        p130_140 = 0,
+        p140_150 = 0,
+        p150_160 = 0,
+        p160_170 = 0,
+        p170_180 = 0,
+        p180_190 = 0,
+        p190_200 = 0
+    },
 
     hitpart_table = {'Head', 'HumanoidRootPart'}, -- [DONE]
     use_closest_part = true, -- // Ignores the hitpart table. [DONE]
     closest_part_mode = 'Point', -- // Point, Part [DONE]
-    visualize_silent = false, -- // Draws a dot on the position you will be shooting.
+    visualize_silent = { -- // Draws a dot on the position you will be shooting. [DONE]
+        enabled = false,
+
+        dot = {
+            enabled = false,
+
+            dot_radius = 5,
+            dot_thickness = 1,
+            dot_transparency = 0,
+            dot_filled = false,
+            dot_color = {solid = Color3.fromRGB(255, 255, 255), rainbow = false}
+        },
+        tracer = {
+            enabled = false,
+
+            tracer_thickness = 1,
+            tracer_transparency = 0,
+            tracer_color = {solid = Color3.fromRGB(255, 255, 255), rainbow = false}
+        }
+    },
 
     fov = {
-        type = 'Static', -- // Static [DONE], Dynamic
+        type = 'Static', -- // Static [DONE], Dynamic [NOT DONE]
 
         visible = false,
         filled = false,
@@ -52,6 +94,7 @@ getgenv().catgirlcc = {
 -- functions/connections
 catgirlcc.functions = {}
 catgirlcc.connections = {}
+catgirlcc.unloaded = false
 catgirlcc.connections.tools = {nil, nil}
 catgirlcc.args = nil
 catgirlcc.current_aimpos = nil
@@ -84,6 +127,9 @@ fov_circle.Thickness = 0.8
 fov_circle.Transparency = 0.7
 fov_circle.Color = catgirlcc.fov.color
 
+local visualized_dot = Drawing.new('Circle')
+local visualized_tracer = Drawing.new('Line')
+
 catgirlcc.functions.update_fov = function()
     if not (fov_circle) then
         return fov_circle
@@ -95,6 +141,7 @@ catgirlcc.functions.update_fov = function()
     return fov_circle
 end
 
+-- use mouse.KeyDown
 catgirlcc.functions.keybinds = function(inputObject, IsTyping)
     if IsTyping then return end
     if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.safety.keybind:Upper()] and catgirlcc.settings.safety.enabled then
@@ -175,32 +222,11 @@ catgirlcc.functions.get_closest_part = function(player)
     return closest_part
 end
 
-catgirlcc.functions.get_closest_point = function(player) -- i don't think this works >:(
-    local mousePosition = game:GetService("UserInputService"):GetMouseLocation()
+catgirlcc.functions.get_closest_point = function(part)
+    local trans = part.CFrame:pointToObjectSpace(Mouse.Hit.Position)
+    local size = part.Size * 0.5
 
-    local ray = CurrentCamera:ViewportPointToRay(mousePosition.X, mousePosition.Y)
-
-    local closest_part = nil
-    local dist = math.huge
-
-    for i, part in pairs(player.Character:GetChildren()) do
-        if table.find({'Part', 'BasePart', 'MeshPart'}, part.ClassName) then
-            if not catgirlcc.use_closest_part and table.find(catgirlcc.hitpart_table, part.Name) then
-                local mag = (part.Position - ray.Origin):Dot(ray.Direction)
-                if mag < dist then
-                    closest_part = part
-                    dist = mag
-                end
-            elseif catgirlcc.use_closest_part then
-                local mag = (part.Position - ray.Origin):Dot(ray.Direction)
-                if mag < dist then
-                    closest_part = part
-                    dist = mag
-                end
-            end
-        end
-    end
-    return ray.Origin + ray.Direction * dist
+    return part.CFrame * Vector3.new(math.clamp(trans.X, -size.X, size.x), math.clamp(trans.Y, -size.Y, size.Y), math.clamp(trans.Z, -size.Z, size.Z))
 end
 
 catgirlcc.functions.is_gun = function(tool, state)
@@ -211,6 +237,70 @@ catgirlcc.functions.is_gun = function(tool, state)
             return tool
         end
     end
+end
+
+catgirlcc.functions.get_prediction = function()
+    if catgirlcc.predict_movement then
+        return catgirlcc.movement_prediction
+    elseif not catgirlcc.predict_movement then
+        return 0
+    end
+end
+
+catgirlcc.functions.auto_movement_prediction = function() -- add in the values when im home
+    if catgirlcc.auto_movement_prediction.enabled then
+        local ping --idk the path
+        if ping > 10 then
+            catgirlcc.movement_prediction = catgirlcc.auto_movement_prediction.p10_20
+        elseif ping > 20 then
+
+        elseif ping > 30 then
+
+        elseif ping > 40 then
+        
+        elseif ping > 50 then
+
+        elseif ping > 60 then
+
+        elseif ping > 70 then
+
+        elseif ping > 80 then
+
+        elseif ping > 90 then
+        
+        elseif ping > 100 then
+        
+        elseif ping > 100 then
+
+        elseif ping > 110 then
+
+        elseif ping > 120 then
+
+        elseif ping > 130 then
+
+        elseif ping > 140 then
+
+        elseif ping > 150 then
+
+        elseif ping > 160 then
+
+        elseif ping > 170 then
+
+        elseif ping > 180 then
+
+        elseif ping > 190 then
+
+        elseif ping > 200 then
+
+    end
+end
+
+catgirlcc.functions.draw_visualized_point = function()
+    if not (visualized_dot or visualized_tracer) then
+        return visualized_dot or visualized_tracer
+    end
+    
+    if
 end
 
 catgirlcc.functions.aim_check = function(player)
@@ -225,7 +315,7 @@ catgirlcc.functions.aim_check = function(player)
         end
     end
     if catgirlcc.checks.crew_check and player and player.Character then
-        -- do when home !!!!
+        -- done at home
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
         return true
@@ -243,20 +333,42 @@ catgirlcc.functions.calculate_aimpoint = function()
             catgirlcc.current_aimpos = catgirlcc.current_aimpart.Position
         end
 
+        if catgirlcc.movement_prediction_type == 'catgirl.cc' then
+            local velocity = catgirlcc.target.Character.Humanoid.MoveDirection * 16
+            catgirlcc.current_aimpos = catgirlcc.current_aimpos + velocity * catgirlcc.functions.get_prediction()
+        elseif catgirlcc.movement_prediction_type == 'Roblox' then
+            local velocity = catgirlcc.current_aimpart.Velocity
+            local resolved_velocity = catgirlcc.target.Character.Humanoid.MoveDirection * 16
+
+            if velocity.Magnitude < 35 then
+                catgirlcc.current_aimpos = catgirlcc.current_aimpos + resolved_velocity * catgirlcc.functions.get_prediction()
+            elseif velocity.Magnitude > 69420 then
+                catgirlcc.current_aimpos = catgirlcc.current_aimpos + resolved_velocity * catgirlcc.functions.get_prediction()
+            else
+                catgirlcc.current_aimpos = catgirlcc.current_aimpos + velocity * catgirlcc.functions.get_prediction()
+            end
+        end
+
         if typeof(catgirlcc.current_aimpos) == 'CFrame' then
             catgirlcc.current_aimpos = catgirlcc.current_aimpos.p
         end
     end
 end
 
-catgirlcc.connections.service = RunService.Heartbeat:Connect(function()
+catgirlcc.connections.mainservice = RunService.Heartbeat:Connect(function()
     catgirlcc.functions.update_fov()
-    catgirlcc.functions.set_aim()
+    catgirlcc.functions.calculate_aimpoint()
+    if catgirlcc.settings.target_type == 'FOV' then
+        catgirlcc.functions.get_closest_player()
+    end
+    if catgirlcc.auto_movement_prediction then
+        catgirlcc.functions.auto_movement_prediction()
+    end
 end)
 
-LocalPlayer.CharacterAdded:Connect(function(char)
+catgirlcc.connections.charadded = LocalPlayer.CharacterAdded:Connect(function(char)
     char.ChildAdded:Connect(function(child)
-        if catgirlcc.functions.is_gun(child) then
+        if catgirlcc.functions.is_gun(child, 'value') then
             if catgirlcc.connections.tools[1] == nil then
                 catgirlcc.connections.tools[1] = child
             end
@@ -270,6 +382,15 @@ LocalPlayer.CharacterAdded:Connect(function(char)
                     Remote:FireServer(catgirlcc.args, catgirlcc.current_aimpos)
                 end
             end)
+
+            -- gun settings [finish home]
+            if catgirlcc.fov.gun_settings.enabled then
+                local gun = catgirlcc.functions.is_gun(child, 'tool')
+
+                if gun[catgirlcc.fov.gun_settings] then
+                    
+                end
+            end
         end
     end)
 end)
