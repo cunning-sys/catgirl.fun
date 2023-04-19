@@ -68,6 +68,9 @@ local GetGuiInset = game:GetService("GuiService"):GetGuiInset()
 local RunService = game:GetService('RunService')
 local Remote = nil
 
+local mt = getrawmetatable(game)
+local backupnamecall = mt.__namecall
+
 if game.PlaceId == 5602055394 then
     Remote = game:GetService('ReplicatedStorage').Bullets
 else
@@ -275,8 +278,16 @@ mt.__namecall = newcclosure(function(self, ...)
     local method = getnamecallmethod()
     local args = {...}
 
-    if catgirlcc.settings.mode == 'Safe' then
-        
+    if catgirlcc.settings.mode == 'Safe' and catgirlcc.target and catgirlcc.current_aimpos then
+        if typeof(args[2]) == 'Vector3' then
+            args[2] = current_aimpos
+        end
+        return backupnamecall(self, unpack(args))
+    end
+
+    if typeof(args[2]) == 'Vector3' then
+        catgirlcc.args = args[2]
+    end
 end)
 
 --[[
