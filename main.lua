@@ -6,7 +6,7 @@ getgenv().catgirlcc = {
     movement_prediction_type = 'catgirl.cc', -- // Roblox ( Uses Roblox velocity. ), catgirl.cc ( Uses catgirl.cc's custom velocity writer. ) [DONE]
     movement_prediction = 0.119,
     auto_movement_prediction = {
-        enabled = true,
+        enabled = false,
 
         p10_20 = 0,
         p20_30 = 0,
@@ -56,9 +56,9 @@ getgenv().catgirlcc = {
     fov = {
         type = 'Static', -- // Static [DONE], Dynamic [NOT DONE]
 
-        visible = false,
+        visible = true,
         filled = false,
-        radius = 8,
+        radius = 35,
         color = Color3.fromRGB(0, 0, 0),
 
         gun_settings = {
@@ -80,7 +80,7 @@ getgenv().catgirlcc = {
     settings = {
         target_type = 'FOV', -- // FOV [DONE], Target
         target_keybind = 'c',
-        mode = 'Safe' -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. ) DONE
+        mode = 'Safe', -- // Safe ( Bypasses aim viewer. ), Blatant ( Uses hook doesn't bypass aim viewer. ) DONE
 
         safety = {
             unload = {
@@ -143,19 +143,6 @@ catgirlcc.functions.update_fov = function()
     fov_circle.Filled = catgirlcc.fov.filled
     fov_circle.Position = Vector2.new(Mouse.X, Mouse.Y + (GetGuiInset.Y))
     return fov_circle
-end
-
--- use mouse.KeyDown
-catgirlcc.functions.keybinds = function(inputObject, IsTyping)
-    if IsTyping then return end
-    if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.safety.keybind:Upper()] and catgirlcc.settings.safety.enabled then
-        catgirlcc.connections.service:Disconnect()
-        catgirlcc.connections.keybinds:Disconnect()
-    end
-
-    if inputObject.KeyCode == Enum.KeyCode[catgirlcc.settings.target_keybind:Upper()] then
-        -- not done !!! do after fov mode
-    end
 end
 
 --[[
@@ -266,7 +253,7 @@ end
 ]]--
 
 catgirlcc.functions.is_gun = function(tool, state)
-    if tool:IsA('Tool') and table.find(table, tool.Name)
+    if tool:IsA('Tool') and table.find({'[Double-Barrel SG]', '[Revolver]'}, tool.Name) then
         if state == 'value' then
             return true
         elseif state == 'tool' then
@@ -335,7 +322,8 @@ catgirlcc.functions.auto_movement_prediction = function() -- add in the values w
         elseif ping > 190 then
 
         elseif ping > 200 then
-
+        	
+		end
     end
 end
 
@@ -347,8 +335,6 @@ catgirlcc.functions.draw_visualized_point = function()
     if not (visualized_dot or visualized_tracer) then
         return visualized_dot or visualized_tracer
     end
-
-    if
 end
 
 --[[
@@ -367,9 +353,7 @@ catgirlcc.functions.aim_check = function(player)
         end
     end
     if catgirlcc.checks.crew_check and player then
-        if player.DataFolder.Information.Crew.Value == LocalPlayer.DataFolder.Information.Crew.Value then
-            return false
-        end
+        -- done at home
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
         return false
