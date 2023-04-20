@@ -367,7 +367,9 @@ catgirlcc.functions.aim_check = function(player)
         end
     end
     if catgirlcc.checks.crew_check and player then
-        -- done at home
+        if player.DataFolder.Information.Crew.Value == LocalPlayer.DataFolder.Information.Crew.Value then
+            return false
+        end
     end
     if catgirlcc.checks.friend_check and player:IsFriendsWith(LocalPlayer.UserId) then
         return false
