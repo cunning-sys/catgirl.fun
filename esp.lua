@@ -25,7 +25,7 @@ local esp = {
     --\ @teammates
     team_chams = { false, Color3.new(1, 1, 1), Color3.new(1, 1, 1), .25, .75, true },
     --
-    team_boxes = { false, Color3.new(), Color3.new(), 0.95 },
+    team_boxes = { false, Color3.new(), Color3.new(), 0 },
     team_healthbar = { false, Color3.new(), Color3.new() },
     team_kevlarbar = { false, Color3.new(), Color3.new() },
     team_arrow = { false, Color3.new(), 0.5 },
