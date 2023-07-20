@@ -2,32 +2,6 @@ repeat
     wait()
 until game:IsLoaded()
 
-local outside_circle = Drawing.new('Circle')
-outside_circle.Visible = false
-outside_circle.Radius = 35 - 1.5
-outside_circle.Color = Color3.fromRGB(0, 0, 0)
-outside_circle.Thickness = 1.5
-
-local inside_circle = Drawing.new('Circle')
-inside_circle.Visible = false
-inside_circle.Radius = 35 + 1.5
-inside_circle.Color = Color3.fromRGB(0, 0, 0)
-inside_circle.Thickness = 1.5
-
-local filled_circle = Drawing.new('Circle')
-filled_circle.Visible = false
-filled_circle.Radius = 35 - 1.5
-filled_circle.Color = Color3.fromRGB(133, 87, 242)
-filled_circle.Thickness = 1.5
-filled_circle.ZIndex = 5
-filled_circle.Filled = true
-
-local main_circle = Drawing.new('Circle')
-main_circle.Visible = false
-main_circle.Radius = 35
-main_circle.Color = Color3.fromRGB(255, 255, 255)
-main_circle.Thickness = 2
-
 local library
 do
     local folder = "catgirl.fun"
