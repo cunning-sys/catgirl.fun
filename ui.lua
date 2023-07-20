@@ -2,9 +2,35 @@ repeat
     wait()
 until game:IsLoaded()
 
+local outside_circle = Drawing.new('Circle')
+outside_circle.Visible = false
+outside_circle.Radius = 35 - 1.5
+outside_circle.Color = Color3.fromRGB(0, 0, 0)
+outside_circle.Thickness = 1.5
+
+local inside_circle = Drawing.new('Circle')
+inside_circle.Visible = false
+inside_circle.Radius = 35 + 1.5
+inside_circle.Color = Color3.fromRGB(0, 0, 0)
+inside_circle.Thickness = 1.5
+
+local filled_circle = Drawing.new('Circle')
+filled_circle.Visible = false
+filled_circle.Radius = 35 - 1.5
+filled_circle.Color = Color3.fromRGB(133, 87, 242)
+filled_circle.Thickness = 1.5
+filled_circle.ZIndex = 5
+filled_circle.Filled = true
+
+local main_circle = Drawing.new('Circle')
+main_circle.Visible = false
+main_circle.Radius = 35
+main_circle.Color = Color3.fromRGB(255, 255, 255)
+main_circle.Thickness = 2
+
 local library
 do
-    local folder = "specter"
+    local folder = "catgirl.fun"
 
     local services = setmetatable({}, {
         __index = function(_, service)
@@ -229,7 +255,7 @@ do
         toggled = true,
         accent = Color3.fromRGB(162, 109, 184),
         outline = { Color3.fromRGB(121, 66, 254), Color3.fromRGB(223, 57, 137) },
-        keybind = Enum.KeyCode.RightShift
+        keybind = Enum.KeyCode.Insert
     }
 
     local accentobjects = { gradient = {}, bg = {}, text = {} }
@@ -3804,9 +3830,5 @@ do
             syn.protect_gui(gui)
             gui.Parent = services.CoreGui
         end
-    end
-
-    function library:Init()
-        library:Initialize()
     end
 end
