@@ -8,9 +8,9 @@ local camera = workspace.CurrentCamera
 local esp = {
     -- settings
     enabled = false,
-    teamcheck = true,
+    teamcheck = false,
     visiblecheck = false,
-    outlines = true,
+    outlines = false,
     limitdistance = false,
     shortnames = false,
 
@@ -578,16 +578,4 @@ end)
 
 esp:bindtorenderstep('esp', 999, esp.update)
 
-esp.enabled = true
-
-esp.teamcheck = false
-
-esp.outlines = true
-esp.team_boxes = {true,Color3.fromRGB(255,255,255),Color3.fromRGB(1,1,1),0}
-esp.team_chams = {true,Color3.fromRGB(138, 139, 194),Color3.fromRGB(138, 139, 194),.25,.75,true}
-esp.team_names = {true,Color3.fromRGB(255,255,255)}
-esp.team_weapon = { true, Color3.fromRGB(255,255,255)}
-esp.team_distance = true
-esp.team_health = true
-esp.team_healthbar = {true, Color3.new(0, 1, 0), Color3.new(1, 0, 0)}
-esp.team_kevlarbar = {true, Color3.new(0,0,1), Color3.new(0,0,1)}
+return esp
