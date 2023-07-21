@@ -13,6 +13,7 @@ local esp = {
     outlines = false,
     limitdistance = false,
     shortnames = false,
+    whitelist = false,
 
     maxchar = 4,
     maxdistance = 1200,
@@ -570,7 +571,9 @@ for i, plr in next, players:GetPlayers() do
     esp:add(plr)
 end
 esp:connect(players.PlayerAdded, function(plr)
-    esp:add(plr)
+    if not esp.whitelist then
+        esp:add(plr)
+    end
 end)
 esp:connect(players.PlayerRemoving, function(plr)
     esp:remove(plr)
