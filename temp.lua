@@ -303,31 +303,38 @@ function esp:remove(plr)
     self.players[plr.Name] = nil;
 end;
 
-esp:disableObject(obj)
+function esp:disableObject(obj)
     local objects = self.objects[obj.Name];
     if objects then
         for i, v in next, objects do
-                v.Visible = false
+        	if v ~= objects['object'] then
+            	v.Visible = false
             end
         end;
     end;
-end
-esp:removeObject(obj)
+end;
+
+function esp:removeObject(obj)
     local objects = self.objects[obj.Name];
     if objects then
         for i, v in next, objects do
-            v:Remove()
+        	if v ~= objects['object'] then
+            	v:Remove()
+            end;
         end;
     end;
     self.objects[obj.Name] = nil;
-end
-esp:addObject(obj)
+end;
+
+function esp:addObject(obj)
     local objs = {
-        name = esp:draw('Text', { Color = NEWCOLOR3(1,1,1), Font = 2, Size = 13, Text = obj.Name }),
-        name_outline = esp:draw('Text', { Color = NEWCOLOR3(), Font = 2, Size = 13, Text = obj.Name }),
+        name = esp:draw('Text', { Color = NEWCOLOR3(1,1,1), Font = 2, Size = 13 }),
+        name_outline = esp:draw('Text', { Color = NEWCOLOR3(), Font = 2, Size = 13 }),
         distance = esp:draw('Text', { Color = NEWCOLOR3(1,1,1), Font = 2, Size = 13 }),
         distance_outline = esp:draw('Text', { Color = NEWCOLOR3(), Font = 2, Size = 13 }),
+        object = obj
     }
+    
     self.objects[obj.Name] = objs
 
     self:connect(obj.Parent.ChildRemoved, function(child)
@@ -336,7 +343,6 @@ esp:addObject(obj)
         end
     end)
 end
-
 
 function esp:update()
     for plr, drawing in next, esp.players do
@@ -606,28 +612,43 @@ function esp:update()
         end
     end
     for obj, drawing in next, esp.objects do
-        local partPosition = obj.PrimaryPart.CFrame.p
+    	local object = drawing.object
+    	local partCFrame = object.PrimaryPart.CFrame
+        local partPosition = NEWVEC2();
+        
+        if object:IsA('BasePart') then
+        	 partPosition = object.CFrame.p
+        elseif object:IsA('Model') then
+        	 partPosition = object.PrimaryPart.CFrame.p
+        end
 
         local _, onScreen = camera:WorldToViewportPoint(partPosition)
         local distance = tostring(FLOOR((partPosition - camera.CFrame.p).Magnitude  / 3))  .. 'm'
+        local transparency = esp:fadeviadistance({
+                limit = esp.limitdistance,
+                cframe = partCFrame,
+                maxdistance = esp.maxdistance,
+                factor = esp.fadefactor
+            })
 
         if not onScreen then
-            esp:disableObject(obj)
+            esp:disableObject(object)
         end
 
         drawing.name.Visible = esp['object_names'][1]
         drawing.name_outline.Visible = esp.outlines and drawing.name.Visible
         if drawing.name.Visible then
-            drawing.name.Text = esp['object_distance'] and '['..distance..'] '..obj.Name
+        	print('visible')
+            drawing.name.Text = esp['object_distance'] and '['..distance..'] '..object.Name
             drawing.name.Font = Drawing.Fonts[esp.font]
             drawing.name.Size = esp.textsize
             drawing.name.Color = esp['object_names'][2]
-            drawing.name.Position = esp:floorvector(NEWVEC2(smallestX + (biggestX - smallestX) / 2 - (drawing.name.TextBounds.X / 2), smallestY - drawing.name.TextBounds.Y - 2))
+            drawing.name.Position = _ + Vector3.new(-27,0,0)
             drawing.name.Transparency = transparency
             drawing.name_outline.Text = drawing.name.Text
             drawing.name_outline.Font = drawing.name.Font
             drawing.name_outline.Size = drawing.name.Size
-            drawing.name_outline.Position = drawing.name.Position + NEWVEC2(1,1)
+            drawing.name_outline.Position = drawing.name.Position + Vector3.new(1,0,1)
             drawing.name_outline.Transparency = transparency
         end
 
@@ -638,12 +659,12 @@ function esp:update()
             drawing.distance.Font = Drawing.Fonts[esp.font]
             drawing.distance.Size = esp.textsize
             drawing.distance.Color = esp['object_names'][2]
-            drawing.distance.Position = esp:floorvector(NEWVEC2(smallestX + (biggestX - smallestX) / 2 - (drawing.distance.TextBounds.X / 2), smallestY - drawing.distance.TextBounds.Y - 2))
+            drawing.distance.Position = _ + Vector3.new(-27,0,5)
             drawing.distance.Transparency = transparency
             drawing.distance_outline.Text = drawing.distance.Text
             drawing.distance_outline.Font = drawing.distance.Font
             drawing.distance_outline.Size = drawing.distance.Size
-            drawing.distance_outline.Position = drawing.distance.Position + NEWVEC2(1,1)
+            drawing.distance_outline.Position = drawing.distance.Position + Vector3.new(1,0,1)
             drawing.distance_outline.Transparency = transparency
         end
     end
