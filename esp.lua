@@ -306,7 +306,7 @@ function esp:update()
             local character = esp.getcharacter(player)
             local playerName = LEN(plr) > esp.maxchar and esp.shortnames and SUB(plr, 0, esp.maxchar) .. '..' or plr
             local pass = esp:check(player)
-            local distance = tostring(FLOOR((character.PrimaryPart.CFrame.p - camera.CFrame.p).Magnitude  / 3))  .. 'm'
+            local distance = tostring(FLOOR((character.PrimaryPart.CFrame.p - camera.CFrame.p).Magnitude))  .. 'm'
             local _, onScreen = camera:WorldToViewportPoint(character['HumanoidRootPart'].Position)
             local centerMassPos = character['HumanoidRootPart'].CFrame
             local transparency = esp:fadeviadistance({
