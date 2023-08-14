@@ -1,5 +1,6 @@
-print('hi')
-  
-local startup_args = ({...})[1] or {}
+local stored;
+local startup_args = ({...})[1] or nil
 
-print(startup_args)
+if startup_args then
+  stored = startup_args[1]
+end
