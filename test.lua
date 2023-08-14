@@ -1,4 +1,4 @@
-print('hi")
+print('hi')
   
 local startup_args = ({...})[1] or {}
 
