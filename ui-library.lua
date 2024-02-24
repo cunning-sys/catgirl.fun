@@ -677,7 +677,6 @@ local newInfo = TweenInfo.new
 local newColor3, fromHex, fromHSV = Color3.new, Color3.fromHex, Color3.fromHSV
 local decode = (syn and syn.crypt.base64.decode) or (crypt and crypt.base64decode) or base64_decode
 local unpack, clear, clone, find, concat = table.unpack, table.clear, table.clone, table.find, table.concat
-local request = syn and syn.request or request
 local inset = services.GuiService:GetGuiInset().Y
 local wait = task.wait
 
@@ -3851,8 +3850,8 @@ function library:Playerlist(max_players)
             player_data[plr].name = plr.Name
 
             spawn(function()
-                local thumbnail_data = services.HttpService:JSONDecode(request{Url = ("https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=%s&size=60x60&format=Png"):format(plr.UserId), Method = "GET"}.Body)
-                local image = request{Url = thumbnail_data.data[1].imageUrl, Method = "GET"}.Body
+                local thumbnail_data = services.HttpService:JSONDecode(request({Url = ("https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=%s&size=60x60&format=Png"):format(plr.UserId), Method = "GET"}).Body)
+                local image = request({Url = thumbnail_data.data[1].imageUrl, Method = "GET"}).Body
 
                 player_data[plr].image = image
                 
@@ -5489,7 +5488,7 @@ function library:Load(options)
         misc:Button{
             name = "Join Discord Server",
             callback = function()
-                request{
+                request({
                     ["Url"] = "http://127.0.0.1:6463/rpc?v=1",
                     ["Method"] = "POST",
                     ["Headers"] = {
@@ -5501,7 +5500,7 @@ function library:Load(options)
                         ["nonce"] = ".",
                         ["args"] = {code = library.discord}
                     }
-                }
+                })
             end
         }
 
