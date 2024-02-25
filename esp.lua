@@ -567,9 +567,6 @@ function esp:update()
     end
 end
 
-for i, plr in next, players:GetPlayers() do
-    esp:add(plr)
-end
 esp:connect(players.PlayerAdded, function(plr)
     if not esp.whitelist then
         esp:add(plr)
