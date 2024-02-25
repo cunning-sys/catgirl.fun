@@ -1,3 +1,6 @@
+local players = game:GetService('Players')
+local localplayer = players.LocalPlayer
+
 local cheat = {functions = {}, connections = {}}
 
 function cheat.functions.getcrewname(plr)
@@ -9,26 +12,51 @@ function cheat.functions.getcrewname(plr)
 end
 
 local library = loadstring(game:HttpGet('https://raw.githubusercontent.com/cunning-sys/catgirl.fun/main/ui-library.lua'))()
+local esp = loadstring(game:HttpGet('https://raw.githubusercontent.com/cunning-sys/catgirl.fun/main/esp.lua'))()
 
 local window = library:Load({
     title = 'catgirl.cc',
+    game = 'da hood',
     discord = '9FawWVxcpG',
     playerlist = true,
     playerlistmax = 40
 })
 
 library.playerlist:Button({
-    name = 'Whitelist',
+    name = 'ESP Whitelist',
     callback = function(list, plr)
-        if not list:IsTagged(plr, 'Whitelisted') then
+        if not list:IsTagged(plr, 'ESP Whitelisted') and esp.enabled and esp.whitelist then
+            esp:add(plr)
             list:Tag({
                 player = plr,
-                text = 'Whitelisted',
+                text = 'ESP Whitelisted',
                 color = Color3.fromRGB(0, 255, 0)
             })
         else
-            list:RemoveTag(plr, 'Whitelisted')
+            esp:remove(plr)
+            list:RemoveTag(plr, 'ESP Whitelisted')
         end
+    end
+})
+
+library.playerlist:Button({
+    name = 'Aim-View',
+    callback = function(list, plr)
+        if not list:IsTagged(plr, 'Aim-Viewing') then
+            list:Tag({
+                player = plr,
+                text = 'Aim-Viewing',
+                color = Color3.fromRGB(0, 255, 0)
+            })
+        else
+            list:RemoveTag(plr, 'Aim-Viewing')
+        end
+    end
+})
+library.playerlist:Button({
+    name = 'Goto',
+    callback = function(list, plr)
+        localplayer.Character.HumanoidRootPart.CFrame = plr.Character.HumanoidRootPart.CFrame
     end
 })
 
@@ -40,13 +68,330 @@ library.playerlist:Label({name = 'Bounty: ', handler = function(plr)
     return plr.DataFolder.Information.Wanted.Value
 end})
 
-local aiming_tab = window:Tab('aiming')
+local aiming_tab = window:Tab(' aiming')
 local bulletredirect_sec = aiming_tab:Section({name = 'bullet-redirection', side = 'Left'})
 local targetaim_sec = aiming_tab:Section({name = 'target-aim', side = 'Middle'})
 local aimassist_sec = aiming_tab:Section({name = 'aim-assist', side = 'Right'})
 
 local visuals_tab = window:Tab('visuals')
 local esp_sec = visuals_tab:Section({name = 'esp', side = 'Left'})
+
+local esp_toggle = esp_sec:Toggle{
+    name = 'enabled',
+    default = false,
+    flag = 'esp_enabled',
+    callback = function(value)
+        esp.enabled = value
+        if value then
+            if not esp.whitelist then
+                for i, plr in next, players:GetPlayers() do
+                    esp:add(plr)
+                end
+            end
+        else
+            for i, plr in next, players:GetPlayers() do
+                esp:remove(plr)
+            end
+        end
+    end
+}
+
+local esp_whitelist_toggle = esp_sec:Toggle{
+    name = 'whitelist',
+    default = false,
+    flag = 'esp_whitelist_enabled',
+    callback = function(value)
+        esp.whitelist = value;
+        if value then
+            for i, plr in next, players:GetPlayers() do
+                esp:remove(plr)
+            end
+        else
+            for i, plr in next, players:GetPlayers() do
+                esp:remove(plr)
+            end
+
+            for i, plr in next, players:GetPlayers() do
+                library.Playerlist:RemoveTag(plr, 'ESP Whitelisted')
+            end
+
+            if esp.enabled then
+                for i, plr in next, players:GetPlayers() do
+                    esp:add(plr)
+                end
+            end
+        end
+    end
+}
+
+local esp_font_size = esp_sec:Slider{
+    name = "font size",
+    default = esp.textsize,
+    min = 0,
+    max = 25,
+    float = 1,
+    flag = "esp_font_size",
+    callback = function(value)
+        esp.textsize = value;
+    end
+}
+
+local esp_limit_distance = esp_sec:Toggle{
+    name = 'limit distance',
+    default = false,
+    flag = 'esp_limit_distance',
+    callback = function(value)
+        esp.limitdistance = value;
+    end
+}
+
+local esp_limited_distance = esp_sec:Slider{
+    name = "limited distance",
+    default = esp.maxdistance,
+    min = 50,
+    max = 5000,
+    float = 1,
+    flag = "esp_limited_distance",
+    callback = function(value)
+        esp.maxdistance = value;
+    end
+}
+
+--[[
+local esp_fade_factor = esp_sec:Slider{
+    name = "fade factor",
+    default = esp.fadefactor,
+    min = 0,
+    max = 100,
+    flag = "esp_fade_factor",
+    callback = function(value)
+        esp.fadefactor = value;
+    end
+}
+]]
+
+local esp_boxes = esp_sec:Toggle{
+    name = 'boxes',
+    default = false,
+    flag = 'esp_boxes',
+    callback = function(value)
+        esp.team_boxes[1] = value;
+    end
+}
+
+esp_boxes:Colorpicker{
+    default = esp.team_boxes[2],
+    flag = 'esp_boxes_color',
+    callback = function(value)
+        esp.team_boxes[2] = value;
+    end
+}
+
+local esp_healthbar = esp_sec:Toggle{
+    name = 'health bar',
+    default = false,
+    flag = 'esp_healthbar',
+    callback = function(value)
+        esp.team_healthbar[1] = value;
+    end
+}
+
+esp_healthbar:Colorpicker{
+    name = 'high health colorpicker',
+    default = Color3.fromRGB(0, 255, 0),
+    flag = 'esp_healthbar_down_color',
+    callback = function(value)
+        esp.team_healthbar[3] = value;
+    end
+}
+
+esp_healthbar:Colorpicker{
+    name = 'low health colorpicker',
+    default = Color3.fromRGB(0, 255, 0),
+    flag = 'esp_healthbar_up_color',
+    callback = function(value)
+        esp.team_healthbar[2] = value;
+    end
+}
+
+local esp_kevlarbar = esp_sec:Toggle{
+    name = 'kevlar bar',
+    default = false,
+    flag = 'esp_kevlarbar',
+    callback = function(value)
+        esp.team_kevlarbar[1] = value;
+    end
+}
+
+esp_kevlarbar:Colorpicker{
+    name = 'low armor colorpicker',
+    default = Color3.fromRGB(0, 0, 255),
+    flag = 'esp_kevlarbar_down_color',
+    callback = function(value)
+        esp.team_kevlarbar[3] = value;
+    end
+}
+
+esp_kevlarbar:Colorpicker{
+    name = 'high armor colorpicker',
+    default = Color3.fromRGB(0, 0, 255),
+    flag = 'esp_kevlarbar_up_color',
+    callback = function(value)
+        esp.team_kevlarbar[2] = value;
+    end
+}
+
+local esp_names = esp_sec:Toggle{
+    name = 'names',
+    default = false,
+    flag = 'esp_names',
+    callback = function(value)
+        esp.team_names[1] = value;
+    end
+}
+
+esp_names:Colorpicker{
+    default = esp.team_names[2],
+    flag = 'esp_names_color',
+    callback = function(value)
+        esp.team_names[2] = value;
+    end
+}
+
+local esp_distance = esp_sec:Toggle{
+    name = 'distance',
+    default = false,
+    flag = 'esp_distance',
+    callback = function(value)
+        esp.team_distance = value;
+    end
+}
+
+local esp_weapon = esp_sec:Toggle{
+    name = 'weapon',
+    default = false,
+    flag = 'esp_weapon',
+    callback = function(value)
+        esp.team_weapon[1] = value;
+    end
+}
+
+esp_weapon:Colorpicker{
+    default = esp.team_weapon[2],
+    flag = 'esp_weapon_color',
+    callback = function(value)
+        esp.team_weapon[2] = value;
+    end
+}
+
+local esp_outlines = esp_sec:Toggle{
+    name = 'outlines',
+    default = false,
+    flag = 'esp_outlines',
+    callback = function(value)
+        esp.outlines = value;
+    end
+}
+
+local esp_chams = esp_sec:Toggle{
+    name = 'chams',
+    default = false,
+    flag = 'esp_chams',
+    callback = function(value)
+        esp.team_chams[1] = value;
+    end
+}
+
+esp_chams:Colorpicker{
+    name = 'outline colorpicker',
+    default = esp.team_chams[3],
+    flag = 'esp_chams_ot_color',
+    callback = function(value)
+        esp.team_chams[3] = value;
+    end
+}
+
+esp_chams:Colorpicker{
+    name = 'filled colorpicker',
+    default = esp.team_chams[2],
+    flag = 'esp_chams_ft_color',
+    callback = function(value)
+        esp.team_chams[2] = value;
+    end
+}
+
+local esp_chams_ot = esp_sec:Slider{
+    name = "outline transparency",
+    default = esp.team_chams[5],
+    min = 0,
+    max = 1,
+    float = 0.01,
+    flag = "esp_chams_ot",
+    callback = function(value)
+        esp.team_chams[5] = value;
+    end
+}
+
+local esp_chams_ft = esp_sec:Slider{
+    name = "chams filled transparency",
+    default = esp.team_chams[4],
+    min = 0,
+    max = 1,
+    float = 0.01,
+    flag = "esp_chams_ft",
+    callback = function(value)
+        esp.team_chams[4] = value;
+    end
+}
+
+local esp_arrows = esp_sec:Toggle{
+    name = 'arrows',
+    default = false,
+    flag = 'esp_arrows',
+    callback = function(value)
+        esp.team_arrow[1] = value;
+    end
+}
+
+esp_arrows:Colorpicker{
+    name = 'arrow colorpicker',
+    default = esp.team_arrow[2],
+    flag = 'esp_arrow_color',
+    callback = function(value)
+        esp.team_arrow[2] = value;
+    end
+}
+
+local esp_arrow_info = esp_sec:Toggle{
+    name = 'arrow info',
+    default = false,
+    flag = 'esp_arrow_info',
+    callback = function(value)
+        esp.arrowinfo = value;
+    end
+}
+
+local esp_arrow_size = esp_sec:Slider{
+    name = "arrow size",
+    default = esp.arrowsize,
+    min = 0,
+    max = 100,
+    flag = "esp_arrow_size",
+    callback = function(value)
+        esp.arrowsize = value;
+    end
+}
+
+local esp_arrow_radius = esp_sec:Slider{
+    name = "arrow radius",
+    default = esp.arrowradius,
+    min = 0,
+    max = 1000,
+    flag = "esp_arrow_radius",
+    callback = function(value)
+        esp.arrowradius = value;
+    end
+}
 
 local settings_tab = window:Tab('settings')
 local configs_sec = settings_tab:Section({name = "configs", side = 'Left'})
@@ -199,6 +544,18 @@ themes_sec:Button{
     end
 }
 
+for _, option in next, theme_options do
+    theme_colorpickers[option] = themes_sec:Colorpicker{
+        name = option,
+        default = library.theme[option],
+        ignored = true,
+        flag = option,
+        callback = function(color)
+            library:ChangeThemeOption(option, color)
+        end
+    }
+end
+
 local settings_sec = settings_tab:Section({name = "settings", side = 'Right'})
 
 settings_sec:Toggle{
@@ -221,6 +578,15 @@ settings_sec:Toggle{
         if library.open then
             library.Playerlist.object.Visible = value
         end
+    end
+}
+
+settings_sec:Toggle{
+    name = "performance drag",
+    default = library.performance_drag,
+    flag = "performance_drag",
+    callback = function(value)
+        library.performance_drag = value
     end
 }
 
