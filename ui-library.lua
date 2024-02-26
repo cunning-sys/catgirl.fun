@@ -4434,7 +4434,7 @@ function library:Window(options)
                 Font = library.font,
                 Size = library.font_size,
                 Theme = "Text",
-                ZIndex = 79
+                ZIndex = 78
             })
 
             return components.dropdown(holder, options, 81)
