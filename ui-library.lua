@@ -4434,7 +4434,7 @@ function library:Window(options)
                 Font = library.font,
                 Size = library.font_size,
                 Theme = "Text",
-                ZIndex = 78
+                ZIndex = 82
             })
 
             return components.dropdown(holder, options, 81)
@@ -4541,7 +4541,7 @@ function library:Load(options)
         title = options.name or "catgirl.cc",
         theme = "Default",
         overrides = {},
-        folder = "catgirl.cc",
+        folder = "catgirl",
         extension = "json",
         game = options.game or "universal",
         tweenspeed = options.animspeed or 0.1,
@@ -4552,7 +4552,7 @@ function library:Load(options)
         notificationyalignment = "bottom",
         watermarkxalignment = "left",
         watermarkyalignment = "top",
-        playerlist = false,
+        playerlist = true,
         playerlistmax = options.maxplayers or 32,
         performancedrag = true,
         keybindlist = false,
