@@ -1664,6 +1664,7 @@ local keys = {
     [Enum.KeyCode.PageDown] = "PAGE-DOWN",
     [Enum.KeyCode.End] = "END",
     [Enum.KeyCode.Tab] = "TAB",
+    [Enum.KeyCode.Insert] = "INSERT",
     [Enum.UserInputType.MouseButton1] = "MOUSE-1",
     [Enum.UserInputType.MouseButton2] = "MOUSE-2",
     [Enum.UserInputType.MouseButton3] = "MOUSE-3"
@@ -1678,8 +1679,7 @@ local blacklisted_keys = {
     [Enum.KeyCode.Escape] = true,
     [Enum.KeyCode.Backspace] = true,
     [Enum.KeyCode.Slash] = true,
-    [Enum.KeyCode.Delete] = true,
-    [Enum.KeyCode.Insert] = true
+    [Enum.KeyCode.Delete] = true
 }
 
 local enums = {}
@@ -3229,7 +3229,7 @@ function library:Loader(options)
     utility.format(options);
 
     utility.defaults(options, {
-        title = "Exodus",
+        title = "catgirl.cc",
         description = "Loading...",
         percentage = 50,
         date = "16/01/22",
@@ -4434,7 +4434,7 @@ function library:Window(options)
                 Font = library.font,
                 Size = library.font_size,
                 Theme = "Text",
-                ZIndex = 78
+                ZIndex = 79
             })
 
             return components.dropdown(holder, options, 81)
@@ -4538,12 +4538,12 @@ function library:Load(options)
     utility.format(options)
 
     utility.defaults(options, {
-        title = options.name or "exodus",
+        title = options.name or "catgirl.cc",
         theme = "Default",
         overrides = {},
-        folder = "exodus",
+        folder = "catgirl.cc",
         extension = "json",
-        game = "universal",
+        game = options.game or "universal",
         tweenspeed = options.animspeed or 0.1,
         easingstyle = Enum.EasingStyle.Linear,
         togglespeed = 0.2,
@@ -4555,7 +4555,7 @@ function library:Load(options)
         playerlist = false,
         playerlistmax = options.maxplayers or 32,
         performancedrag = true,
-        keybindlist = true,
+        keybindlist = false,
         font = worldtoscreen ~= nil and "system" or "plex",
         fontsize = 13,
         discord = "6wp393UeCc",
@@ -4609,7 +4609,7 @@ function library:Load(options)
     end
 
     self.title_bounds = self.holder:Create("Text", {
-        Text = options.title .. " |  ",
+        Text = options.title .. " |    ",
         Font = self.font,
         Size = self.font_size,
         Position = newUDim2(0, 6, 0, 4),
@@ -5518,8 +5518,8 @@ function library:Load(options)
     return window_types
 end
 
-
---[[local window = library:Load{playerlist = true}
+--[[
+local window = library:Load{playerlist = true}
 
 library.Playerlist:button{name = "Prioritize", callback = function(list, plr)
     if not list:IsTagged(plr, "Prioritized") then
@@ -5546,7 +5546,7 @@ library.Playerlist:Label{name = "Team: ", handler = function(plr)
 end}
 
 
-local watermark = library:Watermark("exodus | dev | test | 2.3b fps")
+local watermark = library:Watermark("catgirl.cc | dev | test | 2.3b fps")
 window:SettingsTab(watermark)
 
 local tab = window:Tab("rage")
@@ -5642,7 +5642,7 @@ library:Notify{duration = 3, Color = fromRGB(0, 0, 0)}
 task.wait(1)
 
 library:Notify{duration = 3, Color = fromRGB(0, 0, 0)}
-]]--
 
 utility.format(library, true)
+]]
 return library;
