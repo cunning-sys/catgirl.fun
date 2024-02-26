@@ -4426,6 +4426,7 @@ function library:Window(options)
             holder.main = self.content:Create("Square", {
                 Size = newUDim2(1, 0, 0, 13),
                 Transparency = 0,
+                ZIndex = 80,
                 Outline = false
             })
 
@@ -4434,7 +4435,7 @@ function library:Window(options)
                 Font = library.font,
                 Size = library.font_size,
                 Theme = "Text",
-                ZIndex = 82
+                ZIndex = 79
             })
 
             return components.dropdown(holder, options, 81)
@@ -5031,6 +5032,7 @@ function library:Load(options)
                     holder.main = self.content:Create("Square", {
                         Size = newUDim2(1, 0, 0, 13),
                         Transparency = 0,
+                        ZIndex = 10,
                         Outline = false
                     })
 
@@ -5039,7 +5041,7 @@ function library:Load(options)
                         Font = library.font,
                         Size = library.font_size,
                         Theme = "Text",
-                        ZIndex = 8
+                        ZIndex = 9
                     })
     
                     return components.dropdown(holder, options)
