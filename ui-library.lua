@@ -2068,7 +2068,7 @@ function components.dropdown(holder, options, zindex)
                 current[#current + 1] = chosen
 
                 update_value()
-                option_objects[chosen] = true
+                option_objects[chosen].chosen = true
                 option_objects[chosen].object:Tween(newInfo(library.tween_speed, library.easing_style), {Transparency = 1})
 
                 library:ChangeThemeObject(option_objects[chosen].text, "Text")
